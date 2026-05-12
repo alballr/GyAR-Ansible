@@ -1,0 +1,23 @@
+---
+- name: Actualizar repositorios
+  apt:
+    update_cache: yes
+
+- name: Instalar herramientas basicas
+  apt:
+    name:
+      - vim
+      - wget
+      - git
+    state: present
+
+- name: Crear usuario devops
+  user:
+    name: devops
+    groups: sudo
+    shell: /bin/bash
+    append: yes
+
+- name: Configurar zona horaria
+  timezone:
+    name: Europe/Madrid
