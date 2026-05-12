@@ -1,0 +1,9 @@
+mensaje_exito: |
+  *Instalación completada*
+  Host: `{{ inventory_hostname }}`
+  IP: `{{ ansible_default_ipv4.address }}`
+
+mensaje_error: |
+  *Error en la instalación*
+  Host: `{{ inventory_hostname }}`
+  IP: `{{ ansible_default_ipv4.address }}`

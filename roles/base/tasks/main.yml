@@ -1,23 +1,54 @@
 ---
-- name: Actualizar repositorios
-  apt:
-    update_cache: yes
+- block:
 
-- name: Instalar herramientas basicas
-  apt:
-    name:
-      - vim
-      - wget
-      - git
-    state: present
+    - name: Actualizar repositorios
+      apt:
+        update_cache: yes
 
-- name: Crear usuario devops
-  user:
-    name: devops
-    groups: sudo
-    shell: /bin/bash
-    append: yes
+    - name: Instalar herramientas basicas
+      apt:
+        name:
+          - vim
+          - wget
+          - git
+        state: present
 
-- name: Configurar zona horaria
-  timezone:
-    name: Europe/Madrid
+    - name: Crear usuario devops
+      user:
+        name: devops
+        groups: sudo
+        shell: /bin/bash
+        append: yes
+
+    - name: Configurar zona horaria
+      community.general.timezone:
+        name: Europe/Madrid
+
+    - name: Enviar notificación de éxito a Telegram
+      ansible.builtin.uri:
+        url: "https://api.telegram.org/bot{{ telegram_bot_token }}/sendMessage"
+        method: POST
+        body_format: json
+        body:
+          chat_id: "{{ telegram_chat_id }}"
+          text: "{{ mensaje_exito }}"
+          parse_mode: "Markdown"
+        status_code: 200
+      delegate_to: localhost
+      become: false
+
+  rescue:
+
+    - name: Enviar notificación de error a Telegram
+      ansible.builtin.uri:
+        url: "https://api.telegram.org/bot{{ telegram_bot_token }}/sendMessage"
+        method: POST
+        body_format: json
+        body:
+          chat_id: "{{ telegram_chat_id }}"
+          text: "{{ mensaje_error }}"
+          parse_mode: "Markdown"
+        status_code: 200
+      delegate_to: localhost
+      become: false
+      ignore_errors: true
