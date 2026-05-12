@@ -1,0 +1,20 @@
+---
+- name: Incluir perfil base
+  include_role:
+    name: base
+
+- name: Instalar nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Copiar pagina web
+  copy:
+    content: "<h1>Servidor configurado con Ansible</h1>"
+    dest: /var/www/html/index.html
+
+- name: Asegurar que nginx esta activo
+  service:
+    name: nginx
+    state: started
+    enabled: yes
